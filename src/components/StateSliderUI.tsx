@@ -24,27 +24,16 @@ const Slider: React.FC<SliderProps> = ({ value, onChange }) => {
 };
 
 interface SlidersUIProps {
-  initialX: number;
-  initialY: number;
-  initialZ: number;
+  x: number;
+  y: number;
+  z: number;
   onValuesChange: (x: number, y: number, z: number) => void;
 }
 
-export const SlidersUI: React.FC<SlidersUIProps> = ({ initialX, initialY, initialZ, onValuesChange }) => {
-  const [x, setX] = useState(initialX);
-  const [y, setY] = useState(initialY);
-  const [z, setZ] = useState(initialZ);
-
+export const SlidersUI: React.FC<SlidersUIProps> = ({ x, y, z, onValuesChange }) => {
   const updateValues = (newX: number, newY: number, newZ: number) => {
-    setX(newX);
-    setY(newY);
-    setZ(newZ);
     onValuesChange(newX, newY, newZ);
   };
-
-  useEffect(() => {
-    updateValues(x, y, z);
-  }, []);
 
   const handleXChange = (value: number) => {
     if (value**2 + y**2 + z**2 > 1) {

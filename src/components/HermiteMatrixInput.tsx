@@ -2,66 +2,64 @@ import React, { useState } from 'react';
 import Complex from 'complex.js';
 import { Mat2, Vec3 } from '../calcMat2';
 
-// TODO 状態と、状態更新ロジックを親に寄せる。このままだと状態が分散していてReactみがない。
-// これは再規格化した新しい状態の通知だけをやる。
 
+// エルミート行列のパウリ行列展開を指定するUI
+// useStateのMat2を渡しつつ、コールバックでそれを変更すること
+// matrixはエルミート、つまり実係数であること
 interface HermiteMatrixInputProps {
-    onValuesChange: (values: Mat2) => void;
+    onMatrixChange: (values: Mat2) => void;
+    matrix: Mat2;
 }
 
-const HermiteMatrixInput: React.FC<HermiteMatrixInputProps> = ({ onValuesChange }) => {
-    const [values, setValues] = useState<Mat2>(
-        new Mat2(new Complex(1,0), new Vec3(new Complex(0,0), new Complex(0,0), new Complex(0,0)))
-    );
+const HermiteMatrixInput: React.FC<HermiteMatrixInputProps> = ({ onMatrixChange, matrix}) => {
 
     const handleInputChange = (index: string, value_s: string) => {
         const value = parseFloat(value_s);
+        if (value === Number.NaN) {
+          return;
+        }
         let newValues:Mat2;
 
         switch (index) {
             case "id":
                 newValues = new Mat2(
                     new Complex(value,0),
-                    values.v
+                    matrix.v
                 );
-                setValues(newValues);
-                onValuesChange(newValues);
+                onMatrixChange(newValues);
                 break;
             case "x":
                 newValues = new Mat2(
-                    values.id,
+                    matrix.id,
                     new Vec3(
                         new Complex(value,0),
-                        values.v.y,
-                        values.v.z
+                        matrix.v.y,
+                        matrix.v.z
                     )
                 );
-                setValues(newValues);
-                onValuesChange(newValues);
+                onMatrixChange(newValues);
                 break;
             case "y":
                 newValues = new Mat2(
-                    values.id,
+                    matrix.id,
                     new Vec3(
-                        values.v.x,
+                        matrix.v.x,
                         new Complex(value,0),
-                        values.v.z
+                        matrix.v.z
                     )
                 );
-                setValues(newValues);
-                onValuesChange(newValues);
+                onMatrixChange(newValues);
                 break;
             case "z":
                 newValues = new Mat2(
-                    values.id,
+                    matrix.id,
                     new Vec3(
-                        values.v.x,
-                        values.v.y,
+                        matrix.v.x,
+                        matrix.v.y,
                         new Complex(value,0)
                     )
                 );
-                setValues(newValues);
-                onValuesChange(newValues);
+                onMatrixChange(newValues);
                 break;
         }
     };
@@ -74,7 +72,7 @@ const HermiteMatrixInput: React.FC<HermiteMatrixInputProps> = ({ onValuesChange 
               <input
                   type="number"
                   step="0.000001"
-                  value={values.id.re}
+                  value={matrix.id.re}
                   onChange={(e) => handleInputChange("id", e.target.value)}
                   placeholder="Re"
               />
@@ -86,7 +84,7 @@ const HermiteMatrixInput: React.FC<HermiteMatrixInputProps> = ({ onValuesChange 
               <input
                   type="number"
                   step="0.000001"
-                  value={values.v.x.re}
+                  value={matrix.v.x.re}
                   onChange={(e) => handleInputChange("x", e.target.value)}
                   placeholder="Re"
               />
@@ -98,7 +96,7 @@ const HermiteMatrixInput: React.FC<HermiteMatrixInputProps> = ({ onValuesChange 
               <input
                   type="number"
                   step="0.000001"
-                  value={values.v.y.re}
+                  value={matrix.v.y.re}
                   onChange={(e) => handleInputChange("y", e.target.value)}
                   placeholder="Re"
               />
@@ -110,7 +108,7 @@ const HermiteMatrixInput: React.FC<HermiteMatrixInputProps> = ({ onValuesChange 
               <input
                   type="number"
                   step="0.000001"
-                  value={values.v.z.re}
+                  value={matrix.v.z.re}
                   onChange={(e) => handleInputChange("z", e.target.value)}
                   placeholder="Re"
               />
