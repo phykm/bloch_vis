@@ -6,6 +6,9 @@ interface SliderProps {
   onChange: (value: number) => void;
 }
 
+// TODO 状態と、状態更新ロジックを親に寄せる。このままだと状態が分散していてReactみがない。
+// これは再規格化した新しい状態の通知だけをやる。
+
 const Slider: React.FC<SliderProps> = ({ value, onChange }) => {
   return (
     <input
