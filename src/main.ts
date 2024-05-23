@@ -10,24 +10,29 @@ let path: THREE.Line;
 const maxPoints = 1000; // 軌道の最大点数
 const positions = new Float32Array(maxPoints * 3); // 3次元の位置座標
 let drawCount = 0; // 現在描画する点数
+let container: HTMLElement;
 
-init();
-animate();
+// これあとで起動できるようにエントリポイントを統合する必要がある。
+export function show() {
+  init();
+  animate();
+}
 
 function init() {
-    const container = document.getElementById('container')!;
+    container = document.getElementById('container')!;
 
     // シーンの設定
     scene = new THREE.Scene();
 
     // カメラの設定
-    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
     camera.position.z = 2;
 
     // レンダラーの設定
     renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(container.clientWidth, container.clientHeight);
     container.appendChild(renderer.domElement);
+
 
     // 球体の設定
     const sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
@@ -138,7 +143,7 @@ function updatePath(position: THREE.Vector3) {
 }
 
 function onWindowResize() {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+  camera.aspect = container.clientWidth / container.clientHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(container.clientWidth, container.clientHeight);
 }
