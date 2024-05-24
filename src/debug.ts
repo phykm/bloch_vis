@@ -1,16 +1,27 @@
-import Complex from "complex.js";
-import { Mat2, Vec3 } from "./calcMat2";
+import { HyperLindbladian, expDevelop } from './calcLindblad';
+import { Mat2, Vec3 } from './calcMat2';
+import Complex from 'complex.js';
 
-// npx ts-nodeでデバッグするときのスクリプト置き場
-// 使用例
-const q1 = new Mat2(new Complex(1, 0), new Vec3(new Complex(0, 1), new Complex(1, -1), new Complex(0, 0)));
-const q2 = new Mat2(new Complex(0, 1), new Vec3(new Complex(1, 0), new Complex(0, 1), new Complex(1, -1)));
+export const testLB1 = HyperLindbladian(
+  new Mat2(Complex(0,0),new Vec3(Complex(0,0),Complex(0,0),Complex(1,0))),
+  new Mat2(Complex(0,0),new Vec3(Complex(0,0),Complex(0,0),Complex(0,0)))
+)
 
-const q3 = q1.add(q2);
-console.log(`Sum: ${q3.toString()}`);
+export const testLB2 = HyperLindbladian(
+  new Mat2(Complex(0,0),new Vec3(Complex(0,0),Complex(0,0),Complex(0,0))),
+  new Mat2(Complex(0,0),new Vec3(Complex(1,0),Complex(0,1),Complex(0,0)))
+)
 
-const q4 = q1.mul(q2);
-console.log(`Product: ${q4.toString()}`);
+// Lindblad指数写像の動作チェック。
+let dm = new Mat2(Complex(1,0),new Vec3(Complex(1,0),Complex(0,0),Complex(0,0)))
+for (let i=0;i<200;i++) {
+  let dm_ = expDevelop(dm,testLB1,0.05*i);
+  console.log(dm_.v.toString());
+}
+for (let i=0;i<200;i++) {
+  let dm_ = expDevelop(dm,testLB2,0.05*i);
+  console.log(dm_.v.toString());
+}
 
-const q5 = q1.conjugate();
-console.log(`Conjugate: ${q5.toString()}`);
+
+
