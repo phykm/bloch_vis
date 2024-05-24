@@ -1,5 +1,5 @@
 // src/index.tsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { SlidersUI } from './components/StateSliderUI';
 import { show } from './main';
@@ -7,6 +7,8 @@ import { Mat2, Vec3 } from './calcMat2';
 import ComplexMatrixInput from './components/ComplexMatrixInput';
 import HermiteMatrixInput from './components/HermiteMatrixInput';
 import Complex from 'complex.js';
+import SphereRenderer from './components/SphereRenderer';
+import * as THREE from 'three';
 
 const App: React.FC = () => {
   // オペレータの状態
@@ -35,8 +37,24 @@ const App: React.FC = () => {
   }
 
 
+  const [animatePoint, setAnimatePoint] = useState(true);
+  const [pointPosition, setPointPosition] = useState(new THREE.Vector3(1, 0, 0));
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      console.log("update position")
+      // 新しい位置をランダムに設定
+      const newPosition = new THREE.Vector3(Math.random(), Math.random(), Math.random());
+      setPointPosition(newPosition);
+    }, 100); // 0.05秒ごとに更新
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div>
+      <div>
+        <SphereRenderer animatePoint={animatePoint} pointPosition={pointPosition} />
+      </div>
       <div>
         <h3>State</h3>
         <SlidersUI x={x} y={y} z={z} onValuesChange={handleValuesChange} />
@@ -60,6 +78,6 @@ const App: React.FC = () => {
 };
 
 // これはあとで組み込む必要がある。
-show();
+//show();
 
 ReactDOM.render(<App />, document.getElementById('uiroot'));
