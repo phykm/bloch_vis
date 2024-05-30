@@ -18,6 +18,6 @@ console.log(p(b.getBuffer()))
 b.append(71,72,73)
 console.log(p(b.getBuffer()))
 
-function p(array: Float32Array): string {
+export function p(array: Float32Array): string {
   return Array.from(array).map(num => num.toFixed(2)).join(', ');
 }

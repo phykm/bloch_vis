@@ -82,19 +82,25 @@ export class Mat2 {
   id: Complex; // 単位行列の係数
   v: Vec3 // パウリ行列展開したときの係数
 
+
   constructor(id: Complex,v:Vec3) {
       this.id = id;
       this.v = v;
   }
 
   // (1+XS)/2による状態のD^3表現.D^3に収まらない場合は収まるまで縮小される。
-  densityMat(v:Vec3): Mat2 {
+  static densityMat(v:Vec3): Mat2 {
     var v_ = v
     let abs = v.abs()
     if (abs.re > 1) {
       v_  = v.coeff(abs.inverse())
     }
-    return new Mat2(Complex(0.5,0),v_)
+    return new Mat2(Complex(0.5,0),v_.coeff(Complex(0.5,0)))
+  }
+
+  // 逆にブロッホ球へ落とす場合
+  toBloch(): Vec3 {
+    return new Vec3(this.v.x,this.v.y,this.v.z).coeff(Complex(2.0,1))
   }
 
   add(other: Mat2): Mat2 {

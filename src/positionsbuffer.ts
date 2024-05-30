@@ -23,6 +23,7 @@ export class PositionsBuffer {
     this.body.set([x,y,z],this.new * 3);
     this.new = (this.new+1) % this.logicalsize;
     this.writed = true; // old置き去りは一回のみ。
+    return this;
   }
 
   filledSize = () => {
