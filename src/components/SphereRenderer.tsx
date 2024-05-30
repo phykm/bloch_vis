@@ -1,29 +1,33 @@
 import React, { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { PositionsBuffer } from '../positionsbuffer';
 
 interface ThreeJSSceneProps {
-  animatePoint: boolean;
-  pointPosition: THREE.Vector3;
+  pointPosition: THREE.Vector3; // 現在状態の点座標
+  track: Float32Array; // 軌道線(両方とも親が管理する)
 }
 
-const SphereRenderer: React.FC<ThreeJSSceneProps> = ({ animatePoint, pointPosition }) => {
+const SphereRenderer: React.FC<ThreeJSSceneProps> = ({ pointPosition, track}) => {
+  // このページで状態となり得るものは全部useStateしておく。
+  // しかし、なぜなのかよくわかってない。
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [scene, setScene] = useState<THREE.Scene | null>(null);
   const [camera, setCamera] = useState<THREE.PerspectiveCamera | null>(null);
   const [renderer, setRenderer] = useState<THREE.WebGLRenderer | null>(null);
   const [controls, setControls] = useState<OrbitControls | null>(null);
   const [point, setPoint] = useState<THREE.Mesh | null>(null);
+  const [pathGeometry, setPathGeometry] = useState<THREE.BufferGeometry | null>(null);
   const [path, setPath] = useState<THREE.Line | null>(null);
-  const maxPoints = 1000;
-  const positions = new Float32Array(maxPoints * 3);
-  let drawCount = 0;
+  const maxPoints = 200;
+  const positions = new PositionsBuffer(maxPoints);
 
   // 初期化処理
   useEffect(() => {
-    // nullチェック
+    // nullチェック(静的解析対策?)
     if (!containerRef.current) return;
   
+    // 描画領域のdiv container
     const container = containerRef.current;
   
     // シーンをdivのフルサイズで用意
@@ -37,7 +41,7 @@ const SphereRenderer: React.FC<ThreeJSSceneProps> = ({ animatePoint, pointPositi
     renderer.setSize(container.clientWidth, container.clientHeight);
     container.appendChild(renderer.domElement);
   
-    // ブロッホ球を
+    // ブロッホ球を描く。半径1
     const sphereGeometry = new THREE.SphereGeometry(1, 32, 32);
     const sphereMaterial = new THREE.MeshBasicMaterial({
       color: 0x00ff00,
@@ -46,22 +50,18 @@ const SphereRenderer: React.FC<ThreeJSSceneProps> = ({ animatePoint, pointPositi
       opacity: 0.2
     });
     const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+    // シーンに追加。これはシーンに固定されて動かないので。useStateしていない。
     scene.add(sphere);
-  
-    const pointGeometry = new THREE.SphereGeometry(0.05, 32, 32);
-    const pointMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-    const point = new THREE.Mesh(pointGeometry, pointMaterial);
-    point.position.set(1, 0, 0);
-    scene.add(point);
-    setPoint(point);
 
+    // これは外からの位置指定を受ける点
     const pointGeometry2 = new THREE.SphereGeometry(0.05, 32, 32);
     const pointMaterial2 = new THREE.MeshBasicMaterial({ color: 0xffff00 });
     const point2 = new THREE.Mesh(pointGeometry2, pointMaterial2);
-    point2.position.copy(pointPosition);
+    point2.position.copy(pointPosition); // 最初なのでどうでもいいが、一応propを反映する。
     scene.add(point2);
     setPoint(point2);
   
+    // 軸と平面
     const axisLength = 1.5;
     const axesHelper = new THREE.AxesHelper(axisLength);
     scene.add(axesHelper);
@@ -99,13 +99,16 @@ const SphereRenderer: React.FC<ThreeJSSceneProps> = ({ animatePoint, pointPositi
     const zxPlane = new THREE.Mesh(zxPlaneGeometry, zxPlaneMaterial);
     scene.add(zxPlane);
   
+    // 軌道
     const pathGeometry = new THREE.BufferGeometry();
-    pathGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    pathGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(), 3));
     const pathMaterial = new THREE.LineBasicMaterial({ color: 0xffffff });
     const path = new THREE.Line(pathGeometry, pathMaterial);
     scene.add(path);
+    setPathGeometry(pathGeometry);
     setPath(path);
   
+    // ドラッグでグリグリできるようにする。
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.25;
@@ -115,11 +118,11 @@ const SphereRenderer: React.FC<ThreeJSSceneProps> = ({ animatePoint, pointPositi
     controls.maxPolarAngle = Math.PI;
     controls.mouseButtons = {
       LEFT: THREE.MOUSE.ROTATE,
-      MIDDLE: THREE.MOUSE.DOLLY,
-      RIGHT: THREE.MOUSE.PAN
+      MIDDLE: THREE.MOUSE.DOLLY, // 右には機能割り当てない(カメラが向かう原点は固定)
     };
     setControls(controls);
   
+    // windowリサイズ対応
     window.addEventListener('resize', () => {
       if (container) {
         camera.aspect = container.clientWidth / container.clientHeight;
@@ -132,32 +135,16 @@ const SphereRenderer: React.FC<ThreeJSSceneProps> = ({ animatePoint, pointPositi
     setCamera(camera);
     setRenderer(renderer);
   
-    // animateを初期化時にも呼び出す
+    // 初期化すると自動的にアニメーションが開始する。
+    // 簡単のために、animationは常時起動にしておいて、状態を外部から入力することにする。
     animate();
   
     function animate() {
-      requestAnimationFrame(animate);
-  
-      if (animatePoint) {
-        const time = Date.now() * 0.001;
-        const angle = time * 0.5;
-        point.position.set(Math.cos(angle), 0, Math.sin(angle));
-      } else {
-        point.position.copy(pointPosition);
-      }
-  
-      updatePath(point.position);
+      requestAnimationFrame(animate);  
       controls.update();
       renderer.render(scene, camera);
     }
-  
-    function updatePath(position: THREE.Vector3) {
-      positions.set([position.x, position.y, position.z], drawCount * 3);
-      drawCount = (drawCount + 1) % maxPoints;
-      path.geometry.setDrawRange(0, drawCount);
-      path.geometry.attributes.position.needsUpdate = true;
-    }
-  
+
     return () => {
       // Three.jsのリソースを解放
       renderer.dispose();
@@ -165,12 +152,22 @@ const SphereRenderer: React.FC<ThreeJSSceneProps> = ({ animatePoint, pointPositi
     };
   }, []);
   
-  // pointPositionの変更を監視して更新
+  // pointPositionの変更を監視して更新(アニメーションが回っていれば更新される)
   useEffect(() => {
     if (point) {
       point.position.copy(pointPosition);
     }
   }, [pointPosition]);
+
+  // 軌跡の更新
+  useEffect(() => {
+    if (path && pathGeometry) {
+      path.geometry.setDrawRange(0, track.length / 3);
+      // バッファを与え直す。
+      pathGeometry.setAttribute('position', new THREE.BufferAttribute(track, 3));
+      path.geometry.attributes.position.needsUpdate = true;
+    }
+  }, [track]);
 
   return <div ref={containerRef} id="container" />;
 };

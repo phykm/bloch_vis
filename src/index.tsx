@@ -1,4 +1,3 @@
-// src/index.tsx
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { SlidersUI } from './components/StateSliderUI';
@@ -9,6 +8,7 @@ import HermiteMatrixInput from './components/HermiteMatrixInput';
 import Complex from 'complex.js';
 import SphereRenderer from './components/SphereRenderer';
 import * as THREE from 'three';
+import { PositionsBuffer } from './positionsbuffer';
 
 const App: React.FC = () => {
   // オペレータの状態
@@ -27,6 +27,8 @@ const App: React.FC = () => {
     setY(y);
     setZ(z);
   };
+
+  // スライダーUIから値を受け取る
   const handleHMatrixChange = (m:Mat2)=> {
     console.log(m.toString())
     setHMatrix(m);
@@ -36,16 +38,21 @@ const App: React.FC = () => {
     setLMatrix(m);
   }
 
-
-  const [animatePoint, setAnimatePoint] = useState(true);
+  // 描画用の状態
   const [pointPosition, setPointPosition] = useState(new THREE.Vector3(1, 0, 0));
+  const [track,setTrack] = useState(new Float32Array());
+  const positionsBuffer = new PositionsBuffer(100);
+  // これをflushすればOK
 
+  // テスト用のランダム軌道
   useEffect(() => {
     const interval = setInterval(() => {
       console.log("update position")
       // 新しい位置をランダムに設定
       const newPosition = new THREE.Vector3(Math.random(), Math.random(), Math.random());
+      positionsBuffer.append(newPosition.x,newPosition.y,newPosition.z);
       setPointPosition(newPosition);
+      setTrack(positionsBuffer.getBuffer());
     }, 100); // 0.05秒ごとに更新
     return () => clearInterval(interval);
   }, []);
@@ -53,7 +60,7 @@ const App: React.FC = () => {
   return (
     <div>
       <div>
-        <SphereRenderer animatePoint={animatePoint} pointPosition={pointPosition} />
+        <SphereRenderer track={track} pointPosition={pointPosition} />
       </div>
       <div>
         <h3>State</h3>
@@ -76,8 +83,5 @@ const App: React.FC = () => {
     </div>
   );
 };
-
-// これはあとで組み込む必要がある。
-//show();
 
 ReactDOM.render(<App />, document.getElementById('uiroot'));
