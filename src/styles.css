@@ -10,6 +10,11 @@ body {
     align-items: center;
 }
 
+.fixed-width-button {
+    width: 100px; /* 必要な固定幅を指定 */
+    text-align: center;
+}
+
 .slider {
     -webkit-appearance: none;
     appearance: none;

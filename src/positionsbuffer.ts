@@ -14,7 +14,6 @@ export class PositionsBuffer {
   }
 
   append = (x:number,y:number,z:number)=>{
-    console.log(this.new);
     if (this.old == this.new && this.writed) {
       // 一回以上書き込みが発生したあとでold == newの場合はfullになってる。oldを一つ捨てる。
       // 最初の一回だけは空なので、oldは動かさない。
