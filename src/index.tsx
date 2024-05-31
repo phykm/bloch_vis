@@ -139,7 +139,7 @@ const App: React.FC = () => {
       </div>
       <div className="input-group">
         <div>
-          <button className="fixed-width-button" onClick = {onClickDevelopButton}>{developSwitch ? "時間発展中" : "停止中"}</button>
+          <button className="fixed-width-button" onClick = {onClickDevelopButton} style={{ backgroundColor: developSwitch ? "red" : "yellow"}}>{developSwitch ? "時間発展中" : "停止中"}</button>
           <button className="fixed-width-button" onClick = {onClickTrackFlushButton}>軌道履歴を消す</button>
           <button className="fixed-width-button" onClick = {onClickPresession}>歳差運動なH/L</button>
           <button className="fixed-width-button" onClick = {onClickRandomSetting}>ランダムなH/L</button>
