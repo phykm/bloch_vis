@@ -13,7 +13,7 @@ interface ComplexMatrixInputProps {
 const ComplexMatrixInput: React.FC<ComplexMatrixInputProps> = ({ onMatrixChange, matrix}) => {
     const handleInputChange = (index: string, part: 're' | 'im', value_s: string) => {
         const value = parseFloat(value_s);
-        if (value === Number.NaN) {
+        if (isNaN(value)) {
           return;
         }
         let newMatrix:Mat2;

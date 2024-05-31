@@ -15,7 +15,7 @@ const HermiteMatrixInput: React.FC<HermiteMatrixInputProps> = ({ onMatrixChange,
 
     const handleInputChange = (index: string, value_s: string) => {
         const value = parseFloat(value_s);
-        if (value === Number.NaN) {
+        if (isNaN(value)) {
           return;
         }
         let newValues:Mat2;
