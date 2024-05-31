@@ -1,7 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { PositionsBuffer } from '../positionsbuffer';
 
 interface ThreeJSSceneProps {
   pointPosition: THREE.Vector3; // 現在状態の点座標
@@ -9,18 +8,16 @@ interface ThreeJSSceneProps {
 }
 
 const SphereRenderer: React.FC<ThreeJSSceneProps> = ({ pointPosition, track}) => {
-  // このページで状態となり得るものは全部useStateしておく。
-  // しかし、なぜなのかよくわかってない。
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [scene, setScene] = useState<THREE.Scene | null>(null);
   const [camera, setCamera] = useState<THREE.PerspectiveCamera | null>(null);
+  const [camera_prj, setCamera_prj] = useState<THREE.OrthographicCamera | null>(null);
   const [renderer, setRenderer] = useState<THREE.WebGLRenderer | null>(null);
   const [controls, setControls] = useState<OrbitControls | null>(null);
   const [point, setPoint] = useState<THREE.Mesh | null>(null);
   const [pathGeometry, setPathGeometry] = useState<THREE.BufferGeometry | null>(null);
   const [path, setPath] = useState<THREE.Line | null>(null);
   const maxPoints = 200;
-  const positions = new PositionsBuffer(maxPoints);
 
   // 初期化処理
   useEffect(() => {
@@ -116,9 +113,11 @@ const SphereRenderer: React.FC<ThreeJSSceneProps> = ({ pointPosition, track}) =>
     controls.minDistance = 2;
     controls.maxDistance = 10;
     controls.maxPolarAngle = Math.PI;
+    controls.enableZoom = false; // 移動しないのでzoom不要と判断
     controls.mouseButtons = {
       LEFT: THREE.MOUSE.ROTATE,
-      MIDDLE: THREE.MOUSE.DOLLY, // 右には機能割り当てない(カメラが向かう原点は固定)
+      // MIDDLE: THREE.MOUSE.DOLLY, // いらない気がした。
+      // 右には機能割り当てない(カメラが向かう原点は固定)
     };
     setControls(controls);
   

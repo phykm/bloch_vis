@@ -65,18 +65,20 @@ const ComplexMatrixInput: React.FC<ComplexMatrixInputProps> = ({ onMatrixChange,
     return (
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px' }}>
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <div style={{ marginRight: '10px' }}>I</div>
+          <div>I</div>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
               <input
+                  className="input-number"
                   type="number"
-                  step="0.000001"
+                  step="0.01"
                   value={matrix.id.re}
                   onChange={(e) => handleInputChange("id", 're', e.target.value)}
                   placeholder="Re"
               />
               <input
+                  className="input-number"
                   type="number"
-                  step="0.000001"
+                  step="0.01"
                   value={matrix.id.im}
                   onChange={(e) => handleInputChange("id", 'im', e.target.value)}
                   placeholder="Im"
@@ -84,18 +86,20 @@ const ComplexMatrixInput: React.FC<ComplexMatrixInputProps> = ({ onMatrixChange,
           </div>
       </div>
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <div style={{ marginRight: '10px' }}>σx</div>
+          <div>σx</div>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
               <input
+                  className="input-number"
                   type="number"
-                  step="0.000001"
+                  step="0.01"
                   value={matrix.v.x.re}
                   onChange={(e) => handleInputChange("x", 're', e.target.value)}
                   placeholder="Re"
               />
               <input
+                  className="input-number"
                   type="number"
-                  step="0.000001"
+                  step="0.01"
                   value={matrix.v.x.im}
                   onChange={(e) => handleInputChange("x", 'im', e.target.value)}
                   placeholder="Im"
@@ -103,18 +107,20 @@ const ComplexMatrixInput: React.FC<ComplexMatrixInputProps> = ({ onMatrixChange,
           </div>
       </div>
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <div style={{ marginRight: '10px' }}>σy</div>
+          <div>σy</div>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
               <input
+                  className="input-number"
                   type="number"
-                  step="0.000001"
+                  step="0.01"
                   value={matrix.v.y.re}
                   onChange={(e) => handleInputChange("y", 're', e.target.value)}
                   placeholder="Re"
               />
               <input
+                  className="input-number"
                   type="number"
-                  step="0.000001"
+                  step="0.01"
                   value={matrix.v.y.im}
                   onChange={(e) => handleInputChange("y", 'im', e.target.value)}
                   placeholder="Im"
@@ -122,18 +128,20 @@ const ComplexMatrixInput: React.FC<ComplexMatrixInputProps> = ({ onMatrixChange,
           </div>
       </div>
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <div style={{ marginRight: '10px' }}>σz</div>
+          <div>σz</div>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
               <input
+                  className="input-number"
                   type="number"
-                  step="0.000001"
+                  step="0.01"
                   value={matrix.v.z.re}
                   onChange={(e) => handleInputChange("z", 're', e.target.value)}
                   placeholder="Re"
               />
               <input
+                  className="input-number"
                   type="number"
-                  step="0.000001"
+                  step="0.01"
                   value={matrix.v.z.im}
                   onChange={(e) => handleInputChange("z", 'im', e.target.value)}
                   placeholder="Im"

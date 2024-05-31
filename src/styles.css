@@ -2,6 +2,28 @@ body {
     margin: 0;
 }
 
+h3 {
+    margin: 0%;
+}
+h4 {
+    margin: 0%;
+}
+
+.input-number {
+  flex: 1;
+  min-width: 50px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 5px;
+  margin: 5px;
+  font-size: small;
+}
+
+.input-group {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
 #container {
     width: 100%;
     height: 600px;
@@ -11,7 +33,7 @@ body {
 }
 
 .fixed-width-button {
-    width: 100px; /* 必要な固定幅を指定 */
+    width: 120px; /* 必要な固定幅を指定 */
     text-align: center;
 }
 

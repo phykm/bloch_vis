@@ -67,11 +67,12 @@ const HermiteMatrixInput: React.FC<HermiteMatrixInputProps> = ({ onMatrixChange,
     return (
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px' }}>
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <div style={{ marginRight: '10px' }}>I</div>
+          <div>I</div>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
               <input
+                  className="input-number"
                   type="number"
-                  step="0.000001"
+                  step="0.01"
                   value={matrix.id.re}
                   onChange={(e) => handleInputChange("id", e.target.value)}
                   placeholder="Re"
@@ -79,11 +80,12 @@ const HermiteMatrixInput: React.FC<HermiteMatrixInputProps> = ({ onMatrixChange,
           </div>
       </div>
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <div style={{ marginRight: '10px' }}>σx</div>
+          <div>σx</div>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
               <input
+                  className="input-number"
                   type="number"
-                  step="0.000001"
+                  step="0.01"
                   value={matrix.v.x.re}
                   onChange={(e) => handleInputChange("x", e.target.value)}
                   placeholder="Re"
@@ -91,11 +93,12 @@ const HermiteMatrixInput: React.FC<HermiteMatrixInputProps> = ({ onMatrixChange,
           </div>
       </div>
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <div style={{ marginRight: '10px' }}>σy</div>
+          <div>σy</div>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
               <input
+                  className="input-number"
                   type="number"
-                  step="0.000001"
+                  step="0.01"
                   value={matrix.v.y.re}
                   onChange={(e) => handleInputChange("y", e.target.value)}
                   placeholder="Re"
@@ -103,11 +106,12 @@ const HermiteMatrixInput: React.FC<HermiteMatrixInputProps> = ({ onMatrixChange,
           </div>
       </div>
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-          <div style={{ marginRight: '10px' }}>σz</div>
+          <div>σz</div>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
               <input
+                  className="input-number"
                   type="number"
-                  step="0.000001"
+                  step="0.01"
                   value={matrix.v.z.re}
                   onChange={(e) => handleInputChange("z", e.target.value)}
                   placeholder="Re"

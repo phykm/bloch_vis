@@ -10,12 +10,12 @@ import * as THREE from 'three';
 import { PositionsBuffer } from './positionsbuffer';
 import { Matrix } from 'mathjs';
 import { HyperLindbladian, expDevelop } from './calcLindblad';
-import { p } from './debug2';
+import { initH, initL, randomH, randomL } from './randomMatrix';
 
 const App: React.FC = () => {
   // オペレータの状態
-  const [matrix_H, setHMatrix] = useState<Mat2>(new Mat2(new Complex(0,0), new Vec3(new Complex(1,0), new Complex(0,0), new Complex(0,0))));
-  const [matrix_L, setLMatrix] = useState<Mat2>(new Mat2(new Complex(1,0), new Vec3(new Complex(0,0), new Complex(0,0), new Complex(0,0))));
+  const [matrix_H, setHMatrix] = useState<Mat2>(new Mat2(new Complex(0,0), new Vec3(new Complex(0,0), new Complex(0,0), new Complex(1,0))));
+  const [matrix_L, setLMatrix] = useState<Mat2>(new Mat2(new Complex(0,0), new Vec3(new Complex(0,0.2), new Complex(0.2,0), new Complex(0,0))));
   // リアクティブ計算されるリンドブラディアン
   const hyperLindblad = useRef<Matrix>(HyperLindbladian(matrix_H,matrix_L));
   // リアルタイム更新できるようにrefで持つ。
@@ -67,7 +67,8 @@ const App: React.FC = () => {
   // 状態と軌跡の描画用状態。pointPositionは最新点、trackは軌跡、posotionsBufferは軌跡管理のringedbuffer
   const [pointPosition, setPointPosition] = useState(new THREE.Vector3(0, 0, 1)); // 現在の状態
   const [track,setTrack] = useState(new Float32Array()); // 現在の軌跡
-  const positionsBuffer = useRef(new PositionsBuffer(200)); // 軌跡管理。更新されたら↑に反映する。
+  const buffersize = 300;
+  const positionsBuffer = useRef(new PositionsBuffer(buffersize)); // 軌跡管理。更新されたら↑に反映する。
   // これをflushすればOK
 
   // 新しい点を追加して描画位置を更新する
@@ -112,9 +113,19 @@ const App: React.FC = () => {
   const onClickDevelopButton = useCallback(() => {
     setDevelopSwitch(!developSwitch)
   },[developSwitch]);
-  const onClickTrackFlushButton = useCallback(async ()=> {
-    positionsBuffer.current = new PositionsBuffer(200);
+  const onClickTrackFlushButton = useCallback(()=> {
+    positionsBuffer.current = new PositionsBuffer(buffersize);
     setTrack(positionsBuffer.current.getBuffer());
+  },[]);
+
+  const onClickRandomSetting = useCallback(()=>{
+    setHMatrix(randomH());
+    setLMatrix(randomL());
+  },[]);
+
+  const onClickPresession = useCallback(()=>{
+    setHMatrix(initH);
+    setLMatrix(initL);
   },[]);
 
   return (
@@ -122,23 +133,26 @@ const App: React.FC = () => {
       <div>
         <SphereRenderer track={track} pointPosition={pointPosition} />
       </div>
-      <div>
-        <h3>State</h3>
+      <div className="input-group">
+        <h3>状態(Bloch球x/y/z座標)</h3>
         <SlidersUI x={x} y={y} z={z} onValuesChange={handleStateChangeByUI} />
       </div>
-      <div>
-        <h3>Time Development</h3>
-        <button className="fixed-width-button" onClick = {onClickDevelopButton}>{developSwitch ? "ON" : "OFF"}</button>
-        <button className="fixed-width-button" onClick = {onClickTrackFlushButton}>Flush</button>
-      </div>
-      <div>
-        <h3>Lindbladian</h3>
+      <div className="input-group">
         <div>
-          <h4>H(spanned by Pauli Matrix)</h4>
+          <button className="fixed-width-button" onClick = {onClickDevelopButton}>{developSwitch ? "時間発展中" : "停止中"}</button>
+          <button className="fixed-width-button" onClick = {onClickTrackFlushButton}>軌道履歴を消す</button>
+          <button className="fixed-width-button" onClick = {onClickPresession}>歳差運動なH/L</button>
+          <button className="fixed-width-button" onClick = {onClickRandomSetting}>ランダムなH/L</button>
+        </div>
+      </div>
+      <div className="input-group">
+        <h3>Lindbladian設定</h3>
+        <div>
+          <h4>H(Pauli Matrixの実係数展開)</h4>
           <HermiteMatrixInput onMatrixChange={handleHMatrixChange} matrix={matrix_H}/>
         </div>
         <div>
-          <h4>L(spanned by Pauli Matrix)</h4>
+          <h4>L(Pauli Matrixの複素係数展開)</h4>
           <ComplexMatrixInput onMatrixChange={handleLMatrixChange} matrix={matrix_L}/>
         </div>
       </div>
