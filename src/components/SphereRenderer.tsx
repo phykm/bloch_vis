@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
-import * as THREE from 'three';
+import THREE from '../threejsexporter';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+
 
 interface ThreeJSSceneProps {
   pointPosition: THREE.Vector3; // 現在状態の点座標
@@ -17,7 +18,6 @@ const SphereRenderer: React.FC<ThreeJSSceneProps> = ({ pointPosition, track}) =>
   const [point, setPoint] = useState<THREE.Mesh | null>(null);
   const [pathGeometry, setPathGeometry] = useState<THREE.BufferGeometry | null>(null);
   const [path, setPath] = useState<THREE.Line | null>(null);
-  const maxPoints = 200;
 
   // 初期化処理
   useEffect(() => {

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Complex from 'complex.js';
 import { Mat2, Vec3 } from '../calcMat2';
+import InputNumber from './InputNumber';
 
 
 // エルミート行列のパウリ行列展開を指定するUI
@@ -12,109 +13,95 @@ interface HermiteMatrixInputProps {
 }
 
 const HermiteMatrixInput: React.FC<HermiteMatrixInputProps> = ({ onMatrixChange, matrix}) => {
-
-    const handleInputChange = (index: string, value_s: string) => {
-        const value = parseFloat(value_s);
-        if (isNaN(value)) {
-          return;
-        }
-        let newValues:Mat2;
-
+    const innerMatrix = useRef(matrix);
+    useEffect(()=>{
+      innerMatrix.current = matrix
+    },[matrix]);
+    const handleInputChange = useCallback((index: string, value: number) => {
+        let m = innerMatrix.current;
         switch (index) {
             case "id":
-                newValues = new Mat2(
+                innerMatrix.current = new Mat2(
                     new Complex(value,0),
-                    matrix.v
+                    m.v
                 );
-                onMatrixChange(newValues);
+                onMatrixChange(innerMatrix.current);
                 break;
             case "x":
-                newValues = new Mat2(
-                    matrix.id,
+              innerMatrix.current = new Mat2(
+                    m.id,
                     new Vec3(
                         new Complex(value,0),
-                        matrix.v.y,
-                        matrix.v.z
+                        m.v.y,
+                        m.v.z
                     )
                 );
-                onMatrixChange(newValues);
+                onMatrixChange(innerMatrix.current);
                 break;
             case "y":
-                newValues = new Mat2(
-                    matrix.id,
+              innerMatrix.current = new Mat2(
+                    m.id,
                     new Vec3(
-                        matrix.v.x,
+                        m.v.x,
                         new Complex(value,0),
-                        matrix.v.z
+                        m.v.z
                     )
                 );
-                onMatrixChange(newValues);
+                onMatrixChange(innerMatrix.current);
                 break;
             case "z":
-                newValues = new Mat2(
-                    matrix.id,
+              innerMatrix.current = new Mat2(
+                    m.id,
                     new Vec3(
-                        matrix.v.x,
-                        matrix.v.y,
+                        m.v.x,
+                        m.v.y,
                         new Complex(value,0)
                     )
                 );
-                onMatrixChange(newValues);
+                onMatrixChange(innerMatrix.current);
                 break;
         }
-    };
+    },[]);
 
     return (
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px' }}>
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <div>I</div>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <input
-                  className="input-number"
-                  type="number"
-                  step="0.01"
+              <InputNumber
                   value={matrix.id.re}
-                  onChange={(e) => handleInputChange("id", e.target.value)}
-                  placeholder="Re"
+                  onChange={(v) => handleInputChange("id",v)}
+                  placeHolder='Re'
               />
           </div>
       </div>
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <div>σx</div>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <input
-                  className="input-number"
-                  type="number"
-                  step="0.01"
+              <InputNumber
                   value={matrix.v.x.re}
-                  onChange={(e) => handleInputChange("x", e.target.value)}
-                  placeholder="Re"
+                  onChange={(v) => handleInputChange("x",v)}
+                  placeHolder='Re'
               />
           </div>
       </div>
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <div>σy</div>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <input
-                  className="input-number"
-                  type="number"
-                  step="0.01"
+              <InputNumber
                   value={matrix.v.y.re}
-                  onChange={(e) => handleInputChange("y", e.target.value)}
-                  placeholder="Re"
+                  onChange={(v) => handleInputChange("y",v)}
+                  placeHolder='Re'
               />
           </div>
       </div>
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <div>σz</div>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <input
-                  className="input-number"
-                  type="number"
-                  step="0.01"
+              <InputNumber
                   value={matrix.v.z.re}
-                  onChange={(e) => handleInputChange("z", e.target.value)}
-                  placeholder="Re"
+                  onChange={(v) => handleInputChange("z",v)}
+                  placeHolder='Re'
               />
           </div>
       </div>

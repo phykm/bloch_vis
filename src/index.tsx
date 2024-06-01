@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import { SlidersUI } from './components/StateSliderUI';
 import { Mat2, Vec3 } from './calcMat2';
 import ComplexMatrixInput from './components/ComplexMatrixInput';
 import HermiteMatrixInput from './components/HermiteMatrixInput';
 import Complex from 'complex.js';
 import SphereRenderer from './components/SphereRenderer';
-import * as THREE from 'three';
+import THREE from './threejsexporter';
 import { PositionsBuffer } from './positionsbuffer';
 import { Matrix } from 'mathjs';
 import { HyperLindbladian, expDevelop } from './calcLindblad';
@@ -138,6 +138,7 @@ const App: React.FC = () => {
         <SlidersUI x={x} y={y} z={z} onValuesChange={handleStateChangeByUI} />
       </div>
       <div className="input-group">
+        <h3>コントロール</h3>
         <div>
           <button className="fixed-width-button" onClick = {onClickDevelopButton} style={{ backgroundColor: developSwitch ? "red" : "yellow"}}>{developSwitch ? "時間発展中" : "停止中"}</button>
           <button className="fixed-width-button" onClick = {onClickTrackFlushButton}>軌道履歴を消す</button>
@@ -160,4 +161,6 @@ const App: React.FC = () => {
   );
 };
 
-ReactDOM.render(<App />, document.getElementById('uiroot'));
+
+const root = ReactDOM.createRoot(document.getElementById('uiroot')!);
+root.render(<App />);
