@@ -21,7 +21,7 @@ const SphereRenderer: React.FC<ThreeJSSceneProps> = ({ pointPosition, track}) =>
 
   // 初期化処理
   useEffect(() => {
-    // nullチェック(静的解析対策?)
+    // nullチェック(静的解析対策)
     if (!containerRef.current) return;
   
     // 描画領域のdiv container
@@ -47,7 +47,7 @@ const SphereRenderer: React.FC<ThreeJSSceneProps> = ({ pointPosition, track}) =>
       opacity: 0.2
     });
     const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-    // シーンに追加。これはシーンに固定されて動かないので。useStateしていない。
+    // シーンに追加。これはシーンに固定されて動かない
     scene.add(sphere);
 
     // これは外からの位置指定を受ける点

@@ -1,4 +1,4 @@
-// testQuaternion.ts
+// 計算チェック
 
 import Complex from "complex.js";
 
